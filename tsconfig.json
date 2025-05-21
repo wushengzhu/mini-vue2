@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "baseUrl": "",// 模块解析基路径
+        "outDir": "dist",// 输出目录
+        "sourceMap": true,// 生成source map文件，用于调试
+        "target": "esnext",// 指定生成代码目标
+        "module": "esnext",// 指定生成代码的模块格式
+        "moduleResolution": "node",// 指定模块解析策略
+        "newLine": "lf",
+        "strict": true,// 启用所有严格模式检查
+        "skipLibCheck": true, // 跳过@types包的类型检查，加快编译速度
+
+        "allowJs": true, // 允许编译js文件
+        "noImplicitAny": false,// 禁止隐式any类型推断
+        "noImplicitThis": false,// 禁止隐式this类型推断
+
+        "noUnusedLocals": true,// 报告未使用的函数参数
+        "experimentalDecorators": true,// 启用实验性的装饰器语法
+        "resolveJsonModule": true,// 启用对json文件的解析支持
+        "esModuleInterop": true,// 启用ES模块与CommonJS的互操作性
+        "removeComments": true,// 移除编译后的代码中的注释 
+        "jsx": "preserve",
+        "lib": ["ESNext","dom"],// 指定要包含的库文件
+        "types": ["node"],// 指定需要包含的类型定义文件
+        "paths": {
+
+         }// 模块路径的别名
+    },
+    "include": ["src","packages/*/src"] // 指定包含文件
+}
