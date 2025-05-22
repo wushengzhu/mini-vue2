@@ -45,7 +45,7 @@ function genConfig(name){
             entries:Object.assign({},aliases,opts.alias)
           }),
           ts({
-            tsconfig:path.resolve(__dirname,'../','tsconfig.json'),
+            tsconfig:path.resolve(__dirname,'../','tsconfig.json'), // 指定ts配置文件
             cacheRoot:path.resolve(__dirname,'../','node_modules/.rts2_cache'),
             tsconfigOverride:{
               compilerOptions:{
@@ -69,6 +69,27 @@ function genConfig(name){
             }
         }
     }
+    const vars = {
+      __VERSION__:version,
+      __DEV__:`process.env.NODE_ENV !== 'production'`,
+      __TEST__:false,
+      __GLOBAL:opts.format === 'umd' || name.includes('browser')
+    }
+    
+    if(opts.env){
+      vars['process.env.NODE_ENV'] = JSON.stringify(opts.env)
+      vars.__DEV__ = opts.env !== 'production'
+    }
+
+    vars.preventAssignment = true;
+    config.plugins.push(replace(vars))
+
+    Object.defineProperty(config,'_name',{
+      enumerable:false,
+      value:name
+    })
+
+    return config
 }
 
 if(process.env.TARGET){
