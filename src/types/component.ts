@@ -1,6 +1,7 @@
 import VNode from "src/core/vdom/vnode"
 import { GlobalAPI } from "./global-api"
 import { VNodeComponentOptions } from "./vnode"
+import Watcher from "src/core/observer/watcher"
 
 export declare class Component {
     constructor(options?:any)   
@@ -33,5 +34,7 @@ export declare class Component {
     _isMounted:boolean
 
     _init:Function
-
+    _hasHookEvent:boolean;
+    _watcher:Watcher
+    _watchers:Array<Watcher>;
 } 
