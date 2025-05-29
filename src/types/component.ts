@@ -37,4 +37,6 @@ export declare class Component {
     _hasHookEvent:boolean;
     _watcher:Watcher
     _watchers:Array<Watcher>;
+    _props:Record<string,any>;
+    
 } 

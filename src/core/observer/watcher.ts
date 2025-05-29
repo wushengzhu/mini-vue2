@@ -1,7 +1,9 @@
 import { Component } from "src/types/component";
-import Dep from "./dep";
+import Dep, { DepTarget, popTarget, pushTarget } from "./dep";
 import { noop } from "src/shared/util";
 import { parsePath } from "../util/lang";
+import { SimpleSet } from "../util/env";
+import { handleError } from "../util/error";
 
 export interface WatcherOptions {
     deep?:boolean;
@@ -13,7 +15,7 @@ export interface WatcherOptions {
 
 let uid = 0;
 
-export default class Watcher{
+export default class Watcher implements DepTarget{
   vm:Component;// Vue实例
   expression:string; // 数据属性名
   cb:Function; // 数据变化时执行的回调函数
@@ -69,8 +71,48 @@ export default class Watcher{
 
     this.value = this.lazy ? undefined : this.get()
   }
+    addDep(dep: Dep): void {
+        throw new Error("Method not implemented.");
+    }
+    update(): void {
+        throw new Error("Method not implemented.");
+    }
 
   get(){
-    
+    pushTarget(this)
+    let value
+    const vm = this.vm
+    try{
+        value = this.getter.call(vm,vm)
+    }catch(e){
+        if(this.user){
+            handleError(e,vm,`getter for watcher "${this.expression}"`)
+        }else {
+            throw e
+        }
+    } finally {
+        if(this.deep){
+            
+        }
+        popTarget()
+        this.cleanupDeps()
+    }
+  }
+  cleanupDeps(){
+    let i = this.deps.length
+    while(i--){
+        const dep = this.deps[i]
+        if(!this.newDepIds.has(dep.id)){
+            dep.removeSub(this)
+        }
+    }
+    let tmp:any = this.depIds;
+    this.depIds = this.newDepIds
+    this.newDepIds = tmp
+    this.newDepIds.clear()
+    tmp = this.deps
+    this.deps = this.newDeps
+    this.newDeps = tmp
+    this.newDeps.length = 0
   }
 }

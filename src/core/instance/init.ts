@@ -1,5 +1,6 @@
 import { Component } from "src/types/component";
 import { callHook, initLifecycle } from "./lifecycle";
+import { initState } from "./state";
 
 
 let uid = 0
