@@ -1,5 +1,6 @@
 import { GlobalAPI } from "src/types/global-api";
 import { warn } from "../util";
+import { initMixin } from "./init";
 
 
 // Vue 实例
@@ -9,5 +10,7 @@ function Vue(options){
     }
     this._init(options)
 }
+// @ts-expect-error Vue has function type
+initMixin(Vue)
 
 export default Vue as unknown as GlobalAPI

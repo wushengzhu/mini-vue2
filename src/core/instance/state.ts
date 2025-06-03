@@ -1,4 +1,5 @@
 import { Component } from "src/types/component";
+import { validateProp } from "../util/props";
 
 export function initState(vm:Component){
   vm._watchers = []
@@ -18,10 +19,10 @@ function initProps(vm:Component,propsOptions:Object){
   for(const key in propsOptions){
     keys.push(key)
     const value = validateProp(key,propsOptions,propsData,vm)
-    defineReactive(props,key,value,undefined,true)
+    defineReactive(props,key,value)
 
-    if(!(key in vm)){
-      Proxy(vm,'_props',key)
-    }
+    // if(!(key in vm)){
+    //   proxy(vm,'_props',key)
+    // }
   } 
 }

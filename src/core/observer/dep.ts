@@ -9,6 +9,7 @@ export interface DepTarget{
 let uid = 0;
 const pendingCleanupDeps: Dep[] = []
 /**
+ * 依赖收集器 管理Watcher实例
  * 用于实现响应式数据绑定和视图更新机制
  * 依赖收集、通知订阅者、实现响应机制
  */

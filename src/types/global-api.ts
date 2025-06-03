@@ -3,7 +3,8 @@ import { Component } from "./component"
 
 export interface GlobalAPI {
   (options?:any):void
-  
+  options:Record<string,any>
+
   extend:(options:typeof Component | object) => typeof Component
   mixin:(mixin:Object) => GlobalAPI
   set:<T>(target:Object|Array<T>,key:string|number) => void
