@@ -5,3 +5,5 @@ export interface SimpleSet {
     add(key:string | number): any
     clear():void
 }
+
+export const hasProto = '__proto__' in {} // __proto__ 对象是否存在

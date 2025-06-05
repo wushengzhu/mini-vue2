@@ -10,3 +10,13 @@ export function parsePath(path:string): any{
         return obj
     }
 }
+
+// 定义一个属性
+export function def(obj:Object,key:string,val:any,enumerable?:boolean){
+    Object.defineProperty(obj,key,{
+        value:val,
+        enumerable: !!enumerable,
+        writable: true,
+        configurable: true
+    })
+}
