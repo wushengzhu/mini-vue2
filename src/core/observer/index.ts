@@ -1,7 +1,10 @@
+import { hasOwn, isObject, isPlainObject } from "src/shared/util";
 import { hasProto } from "../util/env";
 import { def } from "../util/lang";
+import VNode from "../vdom/vnode";
 import { arrayMethods } from "./array";
 import Dep from "./dep";
+import { shouldObserve } from "../instance/state";
 
 
 const arrayKeys = Object.getOwnPropertyNames(arrayMethods) // 获取数组所有属性
@@ -49,8 +52,28 @@ export class Observer{
     }
 }
 
+/**
+ * 创建一个Observer实例来观察'value'
+ * @param value 
+ * @param asRootData 
+ */
 export function observe(value:any,asRootData?:boolean):Observer | void{
-  
+    // 判断是否是对象或是虚拟节点
+  if(!isObject(value)||value instanceof VNode){
+    return
+  }
+  let ob;// Observer | void
+  if(hasOwn(value,'__ob__') && value.__ob__ instanceof Observer){
+    ob = value.__ob__
+  }else if(shouldObserve && (Array.isArray(value)||isPlainObject(value))&& Object.isExtensible(value)&& !value._isVue){
+    // 非vue实例、可扩展
+    ob = new Observer(value)
+  }
+  // 根数据，追踪有多少Vue实例依赖这个Observer
+  if(asRootData && ob){
+    ob.vmCount++
+  }
+  return ob
 }
 
 export function defineReactive(obj:Object,key:string,val?:any,customSetter?:Function,shallow?:boolean){

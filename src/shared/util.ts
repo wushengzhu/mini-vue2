@@ -63,3 +63,19 @@ function nativeBind(fn: Function, ctx: Object): Function {
 // 判断当前环境是否支持 Function.prototype.bind ? nativeBind : polyfillBind
 // @ts-expect-error
 export const bind = Function.prototype.bind ? nativeBind : polyfillBind
+
+const _toString = Object.prototype.toString
+
+// 判断对象是否为普通对象的函数
+export function isPlainObject(obj:any):boolean{
+  return _toString.call(obj) === '[object Object]'
+}
+
+/**
+ * 判断是否是一个对象
+ * @param obj 
+ * @returns 
+ */
+export function  isObject(obj:any):boolean{
+  return  obj!==null && typeof obj === 'object'
+}

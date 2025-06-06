@@ -51,16 +51,24 @@ export default class Dep {
     }
 }
 
+/**
+ * 示例场景：组件A渲染组件B，组件B渲染C
+ * A：push A   target A
+ * B：push B   target B
+ * C：push C   target C
+ * 
+ * C处理完后 pop C   target B
+ * ...
+ */
+Dep.target = null // 全局变量指向当前正在处理的Watcher实例
+const targetStack: Array<DepTarget | null | undefined> = [] // 管理当前正在处理的Watcher
 
-Dep.target = null
-const targetStack: Array<DepTarget | null | undefined> = []
-
-export function pushTarget(target?: DepTarget | null){
+export function pushTarget(target?: DepTarget | null){ // 将当前Watcher压入栈
     targetStack.push(target)
     Dep.target = target
 }
 
-export function popTarget(){
+export function popTarget(){ // 处理完后恢复之前的Watcher
     targetStack.pop()
     Dep.target = targetStack[targetStack.length-1]
 }

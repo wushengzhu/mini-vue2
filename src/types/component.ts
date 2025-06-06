@@ -38,5 +38,5 @@ export declare class Component {
     _watcher:Watcher
     _watchers:Array<Watcher>;
     _props:Record<string,any>;
-    
+    _data:Record<string,any>;// 定义一个灵活对象类型，键是字符串，值是任何类型
 } 
