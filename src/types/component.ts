@@ -2,6 +2,7 @@ import VNode from "src/core/vdom/vnode"
 import { GlobalAPI } from "./global-api"
 import { VNodeComponentOptions } from "./vnode"
 import Watcher from "src/core/observer/watcher"
+import { ComponentOptions } from "./options"
 
 export declare class Component {
     constructor(options?:any)   
@@ -16,7 +17,7 @@ export declare class Component {
     $el:any
     $data:Record<string,any>
     $props:Record<string,any>
-    $options: VNodeComponentOptions
+    $options: ComponentOptions
     $root:Component
     $parent:Component | undefined
     $children: Array<Component>
@@ -39,4 +40,5 @@ export declare class Component {
     _watchers:Array<Watcher>;
     _props:Record<string,any>;
     _data:Record<string,any>;// 定义一个灵活对象类型，键是字符串，值是任何类型
+    _computedWatchers:{[key:string]: Watcher}
 } 

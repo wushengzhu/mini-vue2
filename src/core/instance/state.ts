@@ -6,6 +6,7 @@ import { popTarget, pushTarget } from "../observer/dep";
 import { handleError } from "../util/error";
 import { warn } from "../util/debug";
 import { isReserved } from "../util/lang";
+import Watcher from "../observer/watcher";
 
 
 export function initState(vm:Component){
@@ -18,6 +19,36 @@ export function initState(vm:Component){
   }else{
     observe(vm._data={},true)
   }
+  if(opts.computed) initComputed(vm,opts.computed)
+}
+
+const computedWatcherOptions = {lazy:true} // 计算属性是懒加载的，只有被访问时才会计算
+function initComputed(vm:Component,computed:Object){
+  const watchers = vm._computedWatchers = Object.create(null)
+  const isSSR = false;
+
+  for(const key in computed){ // 遍历每个computed
+    const userDef = computed[key] // 用户定义的计算属性
+    const getter = typeof userDef === 'function' ? userDef : userDef.get
+    if(getter == null && process.env.NODE_ENV !== 'production'){
+      warn(`Getter不存在于当前属性key${key}的计算属性中`,vm)
+    }
+
+    if(!isSSR){
+      // ssr时计算属性只是getter
+      // 非ssr创建Watcher实例，监听getter的变化
+      watchers[key] = new Watcher(vm,getter || noop,noop,computedWatcherOptions)
+    }
+
+    if(!(key in vm)){
+      // vm不存在这个key 调用defineComputed来定义这个计算属性
+      defineComputed(vm,key,userDef)
+    }
+  }
+}
+
+export function defineComputed(target:any,key:string,userDef:Object | Function){
+
 }
 
 // 在某些情况下，我们可能需要在组件的更新计算过程中禁用观察机制（用来追踪数据变化并触发视图更新的核心功能）
