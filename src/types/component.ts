@@ -24,6 +24,7 @@ export declare class Component {
     $slots:{[key:string]:Array<VNode>}
     $refs:{[key:string]:Component | Element | Array<Component | Element> | undefined}
 
+    $watch:(expOrFn:string | (()=>any),cb:Function,options?:Record<string,any>) => Function
     $mount:(el?:Element | string,hydrating?:boolean) => Component & {[key:string]:any}
     $set:<T>(target:Record<string,any>|Array<T>,key:string|number,val:T) => T
     $nextTick:(fn:(...args:any[])=>any) => void|Promise<any>

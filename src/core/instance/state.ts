@@ -2,12 +2,23 @@ import { Component } from "src/types/component";
 import { validateProp } from "../util/props";
 import { defineReactive, observe } from "../observer";
 import { bind, hasOwn, isPlainObject, noop } from "src/shared/util";
-import { popTarget, pushTarget } from "../observer/dep";
+import Dep, { popTarget, pushTarget } from "../observer/dep";
 import { handleError } from "../util/error";
 import { warn } from "../util/debug";
 import { isReserved } from "../util/lang";
 import Watcher from "../observer/watcher";
+import { isServerRendering } from "../util/env";
 
+const sharedPropertyDefinitintion = {
+  enumerable: true,
+  configurable: true,
+  get: noop,
+  set: noop
+}
+
+// 尝试获取一个原生的watch方法，检测浏览器是否支持原生观察者api
+// @ts-expect-error
+export const nativeWatch = {}.watch
 
 export function initState(vm:Component){
   vm._watchers = []
@@ -20,6 +31,31 @@ export function initState(vm:Component){
     observe(vm._data={},true)
   }
   if(opts.computed) initComputed(vm,opts.computed)
+  if(opts.watch && opts.watch !== nativeWatch){
+    initWatch(vm,opts.watch)
+  }
+}
+
+function initWatch(vm:Component,watch:Object){
+  for(const key in watch){
+    const handler = watch[key]
+    if(Array.isArray(handler)){
+     
+    }else{
+      createWatcher(vm,key,handler)
+    }
+  }
+}
+
+function createWatcher(vm:Component,expOrFn:string|(()=>any),handler:any,options?:Object){
+   if(isPlainObject(handler)){
+    options = handler
+    handler = handler.handler
+   }
+   if(typeof handler === 'string'){
+    handler = vm[handler]
+   }
+   return vm.$watch(expOrFn,handler,options)
 }
 
 const computedWatcherOptions = {lazy:true} // 计算属性是懒加载的，只有被访问时才会计算
@@ -48,7 +84,40 @@ function initComputed(vm:Component,computed:Object){
 }
 
 export function defineComputed(target:any,key:string,userDef:Object | Function){
+   const shouldCache = !isServerRendering()
+   if(typeof userDef === 'function'){
+      // 
+    sharedPropertyDefinitintion.get = shouldCache ?
+       createComputedGetter(key) : createGetterInvoker(userDef)
+      sharedPropertyDefinitintion.set = noop
+   }else{
+    // @ts-expect-error
+    sharedPropertyDefinitintion.get = userDef.get ? shouldCache && userDef.cache !== false ? createComputedGetter(key):createGetterInvoker(userDef.get):noop
+    // @ts-expect-error
+    sharedPropertyDefinitintion.set = userDef.set || noop
+  }
 
+   Object.defineProperty(target,key,sharedPropertyDefinitintion)
+}
+
+function createGetterInvoker(fn){
+  return function computedGetter(){
+    return fn.call(this,this)
+  }
+}
+function createComputedGetter(key){
+  return function computedGetter (){
+    const watcher = this._computedWatchers && this._computedWatchers[key]
+    if(watcher){
+      if(watcher.dirty){
+        watcher.evaluate()
+      }
+      if(Dep.target){
+       watcher.depend() 
+      }
+      return watcher.value
+    }
+  }
 }
 
 // 在某些情况下，我们可能需要在组件的更新计算过程中禁用观察机制（用来追踪数据变化并触发视图更新的核心功能）
@@ -134,18 +203,12 @@ function initMethods(vm: Component,methods: Object){
   }
 }
 
-const sharedPropertyDefinitin = {
-  enumerable: true,
-  configurable: true,
-  get: noop,
-  set: noop
-}
 export function proxy(target:Object,sourceKey:string,key:string){
-  sharedPropertyDefinitin.get = function proxyGetter(){
+  sharedPropertyDefinitintion.get = function proxyGetter(){
     return this[sourceKey][key]
   }
-  sharedPropertyDefinitin.set = function proxySetter(val){
+  sharedPropertyDefinitintion.set = function proxySetter(val){
     this[sourceKey][key] = val
   }
-  Object.defineProperty(target,key,sharedPropertyDefinitin)
+  Object.defineProperty(target,key,sharedPropertyDefinitintion)
 }
