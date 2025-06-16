@@ -37,3 +37,19 @@ export default class VNode{
         return this.componentInstance
     }
 }
+
+/**
+ * 创建一个空的虚拟节点并标记为注释节点
+ * @param text 
+ * @returns 
+ */
+export const createEmptyVNode = (text:string = '') => {
+    const node = new VNode()
+    node.text = text
+    node.isComment = true
+    return node
+}
+
+export function createTextVNode(val:string|number){
+    return new VNode(undefined,undefined,undefined,String(val))
+}

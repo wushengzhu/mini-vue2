@@ -40,7 +40,9 @@ function initWatch(vm:Component,watch:Object){
   for(const key in watch){
     const handler = watch[key]
     if(Array.isArray(handler)){
-     
+      for(let i=0;i<handler.length;i++){
+        createWatcher(vm,key,handler)
+      }
     }else{
       createWatcher(vm,key,handler)
     }

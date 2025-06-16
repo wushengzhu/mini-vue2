@@ -19,6 +19,12 @@ export function isPrimitive(value: any): boolean {
   )
 }
 
+// 处理字符串首字母大写
+const camelzeRE = /-(\w)/g
+export const camelize = cached((str:string):string =>{
+  return str.replace(camelzeRE,(_,c)=>(c?c.toUpperCase():''))
+})
+
 const hasOwnProperty = Object.prototype.hasOwnProperty
 export function hasOwn(obj: Object | Array<any>, key: string): boolean {
   return hasOwnProperty.call(obj, key)
