@@ -6,6 +6,10 @@ export function noop(a?: any, b?: any, c?: any) { }
 export function isDef<T>(v: T): v is NonNullable<T> {
   return v !== undefined && v !== null
 }
+
+export function isUndef<T>(v: T){
+  return v === undefined && v === null
+}
 export function isPromise(val: any): val is Promise<any> {
   return (
     isDef(val) &&

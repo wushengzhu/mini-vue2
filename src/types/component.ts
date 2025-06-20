@@ -1,6 +1,6 @@
 import VNode from "src/core/vdom/vnode"
 import { GlobalAPI } from "./global-api"
-import { VNodeComponentOptions } from "./vnode"
+import { VNodeChildren, VNodeComponentOptions, VNodeData } from "./vnode"
 import Watcher from "src/core/observer/watcher"
 import { ComponentOptions } from "./options"
 
@@ -19,6 +19,7 @@ export declare class Component {
     $props:Record<string,any>
     $options: ComponentOptions
     $root:Component
+    $vnode: VNode
     $parent:Component | undefined
     $children: Array<Component>
     $slots:{[key:string]:Array<VNode>}
@@ -35,11 +36,16 @@ export declare class Component {
     _self:Component
     _isMounted:boolean
 
-    _init:Function
+    _parentVnode
     _hasHookEvent:boolean;
     _watcher:Watcher
+    _vnode:VNode | null
     _watchers:Array<Watcher>;
     _props:Record<string,any>;
     _data:Record<string,any>;// 定义一个灵活对象类型，键是字符串，值是任何类型
     _computedWatchers:{[key:string]: Watcher}
+
+    _init:Function
+
+    _c: (vnode: VNode, data?: VNodeData, children?: VNodeChildren, normalizationType?:number ) => VNode | void
 } 

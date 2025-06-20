@@ -48,4 +48,6 @@ export type ComponentOptions = {
     mixins?:Array<Object>
 
     abstract:any
+
+    _parentVnode?:VNode
   }

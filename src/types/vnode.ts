@@ -1,3 +1,4 @@
+import VNode from "src/core/vdom/vnode"
 import { PropOptions } from "./options"
 
 
@@ -11,3 +12,7 @@ export type VNodeComponentOptions = {
   data: object | Function | void
   props?: string[] | Record<string,Function | Array<Function> | null | PropOptions>
 }
+
+
+export type VNodeChildren = | Array<null | VNode | string | number | VNodeChildren> | string
+

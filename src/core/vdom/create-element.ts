@@ -1,4 +1,4 @@
-import { isDef, isPrimitive } from "src/shared/util"
+import { isDef, isPrimitive, isUndef } from "src/shared/util"
 import { Component } from "src/types/component"
 import VNode, { createEmptyVNode } from "./vnode"
 
@@ -30,6 +30,9 @@ export function _createElement(context:Component,tag:any,data:any,children:any,n
     let vnode,ns 
     if(typeof tag === 'string'){
         let Ctor
+        vnode = new VNode(tag,data,children,undefined,undefined,context)
+    }else {
+        vnode = createComponent(tag,data,context,children)
     }
 
     if(Array.isArray(vnode)){
@@ -41,3 +44,9 @@ export function _createElement(context:Component,tag:any,data:any,children:any,n
     }
 }
 
+
+function createComponent(Ctor,data,context,children){
+   if(isUndef(Ctor)){
+    
+   }
+}
